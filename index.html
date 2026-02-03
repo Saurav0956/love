@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For You 🌼</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    --pastel-pink: #ffd1dc;
+    --pastel-yellow: #fff5ba;
+    --pastel-blue: #c1e1ff;
+    --deep-pink: #ff6f91;
+    --text-color: #5d5d5d;
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+    font-family: 'Quicksand', sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+  }
+
+  /* --- BACKGROUND FLOATING ITEMS --- */
+  .bg-hearts {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .float-item {
+    position: absolute;
+    font-size: 1.8rem;
+    opacity: 0;
+    animation: floatUp linear forwards;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    20% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(1.2) rotate(45deg); opacity: 0; }
+  }
+
+  /* --- COMMON CONTAINER STYLES --- */
+  .container {
+    position: absolute;
+    z-index: 10;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    padding: 50px;
+    border-radius: 25px;
+    text-align: center;
+    transition: all 0.5s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9);
+  }
+
+  .container.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  h1 {
+    font-family: 'Sacramento', cursive;
+    font-size: 3.5rem;
+    color: var(--deep-pink);
+    margin-bottom: 20px;
+  }
+
+  /* --- LOCK SCREEN --- */
+  .lock-screen input {
+    padding: 15px 25px;
+    border-radius: 50px;
+    border: 2px solid #fff;
+    background: rgba(255,255,255,0.9);
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    outline: none;
+    width: 250px;
+    letter-spacing: 5px;
+    color: var(--deep-pink);
+  }
+  
+  .btn {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(to right, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 105, 135, 0.3);
+    transition: transform 0.2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+
+  /* HINT ICON STYLE */
+  .hint-icon {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.3);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+  }
+  .hint-icon:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: rotate(15deg);
+  }
+
+  /* --- HINT MODAL --- */
+  .hint-modal {
+    width: 500px;
+  }
+  .hint-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-top: 30px;
+    height: 100px;
+    position: relative;
+  }
+  
+  /* --- REWARD MODAL (QR CODE) --- */
+  .reward-modal {
+    width: 400px;
+  }
+  .qr-code {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    margin: 10px auto;
+    border: 5px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: block;
+    object-fit: cover;
+  }
+  .btn-back {
+    margin-top: 15px;
+    background: #fff;
+    color: #888;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    animation-delay: 1s;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* --- QUESTION SCREEN --- */
+  .question-screen { width: 500px; }
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin-top: 30px;
+    height: 100px;
+    position: relative;
+  }
+
+  /* --- ENVELOPE AREA --- */
+  .envelope-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s, transform 1s ease-in-out;
+    z-index: 20;
+    transform: translateY(50px);
+  }
+  .envelope-wrapper.active { opacity: 1; pointer-events: auto; }
+  .envelope-wrapper.open-state { transform: translateY(150px); }
+
+  .envelope {
+    position: relative;
+    width: 600px;
+    height: 380px; 
+    background: #ff8fab;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.5s;
+  }
+  .envelope:hover { transform: translateY(-5px); }
+
+  .flap {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #ff9eb5;
+    clip-path: polygon(0 0, 50% 55%, 100% 0);
+    transform-origin: top;
+    transition: transform 0.8s ease-in-out;
+    z-index: 5;
+    border-radius: 10px 10px 0 0;
+  }
+  .flap.open { transform: rotateX(180deg); z-index: 1; }
+
+  .pocket {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 100%;
+    background: #ff8fab;
+    clip-path: polygon(0% 100%, 100% 100%, 100% 0, 50% 55%, 0 0);
+    z-index: 4;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .seal {
+    position: absolute;
+    top: 55%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px; height: 70px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-size: 2.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 6;
+  }
+
+  /* The Letter */
+  .letter {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    width: 90%;
+    height: 100%;
+    background: #fffafb;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), height 1.2s;
+    z-index: 2;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Daisy Design on Letter */
+  .letter-deco {
+    position: absolute;
+    font-size: 2.5rem;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+    filter: grayscale(0.2);
+  }
+  .deco-tl { top: 20px; left: 20px; transform: rotate(-20deg); }
+  .deco-tr { top: 20px; right: 20px; transform: rotate(20deg); }
+  .deco-bl { bottom: 20px; left: 20px; transform: rotate(20deg); }
+  .deco-br { bottom: 20px; right: 20px; transform: rotate(-20deg); font-size: 2rem;}
+
+  .letter-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .letter.active {
+    transform: translateX(-50%) translateY(-50%); 
+    height: 60vh; 
+    overflow-y: auto;
+    z-index: 10;
+  }
+  .letter::-webkit-scrollbar { width: 8px; }
+  .letter::-webkit-scrollbar-thumb { background: #ffd1dc; border-radius: 4px; }
+
+  .letter h2 {
+    font-family: 'Sacramento', cursive;
+    color: var(--deep-pink);
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+
+  .letter-text {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: #666;
+    white-space: pre-line;
+  }
+
+  .signature {
+    margin-top: 30px;
+    text-align: right;
+    font-family: 'Sacramento', cursive;
+    font-size: 2rem;
+    color: var(--deep-pink);
+  }
+
+  .proposal-btn {
+    display: none;
+    margin: 40px auto 10px auto;
+    background: var(--deep-pink);
+    color: white;
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 111, 145, 0.4);
+    animation: pulseBtn 1.5s infinite;
+  }
+  @keyframes pulseBtn {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  /* --- CELEBRATION OVERLAY --- */
+  .celebration {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s;
+  }
+  .celebration.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .celebration h1 {
+    font-family: 'Sacramento', cursive;
+    font-size: 5rem;
+    color: var(--deep-pink);
+    line-height: 1.2;
+    text-align: center;
+    animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .confetti {
+    position: absolute;
+    font-size: 2.5rem;
+    animation: confettiFall linear forwards;
+    top: -10vh;
+    z-index: 101;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+</style>
+</head>
+<body>
+
+  <audio id="music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_9b7b9a8f8c.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="bg-hearts" id="bg-hearts"></div>
+
+  <div class="container lock-screen active" id="screen-lock">
+    <h1>My Heart is Locked 🔒</h1>
+    <input type="password" id="password" placeholder="••••••" maxlength="6">
+    <br>
+    <button class="btn" onclick="checkPass()">Unlock 💗</button>
+    <br>
+    <div class="hint-icon" onclick="openHint()">💡</div>
+  </div>
+
+  <div class="container hint-modal" id="screen-hint">
+    <h1>Who loves more? 🤔</h1>
+    <div class="hint-buttons">
+      <button class="btn" id="btn-aashi" style="background: white; color: #888; border: 2px solid #eee;">meee(aashi)</button>
+      
+      <button class="btn" id="btn-sauru" onclick="showReward()">youu(sauru)</button>
+    </div>
+  </div>
+
+  <div class="container reward-modal" id="screen-reward">
+    <h1>Correct answer! 🌸</h1>
+    <p style="margin-bottom: 10px;">My love, this is ur reward:</p>
+    
+    <img src="https://i.postimg.cc/wMnC8p8d/63f36cda-158e-4b83-aec8-648407199906.jpg" alt="QR" class="qr-code">
+    
+    <button class="btn btn-back" onclick="goBackToLock()">Go Back ↩️</button>
+  </div>
+
+  <div class="container question-screen" id="screen-question">
+    <h1>do you love me? <br> 🥺👉🏻👈🏻</h1>
+    <div class="btn-group">
+      <button class="btn" id="btn-yes">Yes 💗</button>
+      <button class="btn" id="btn-no" style="background: white; color: #888; border: 2px solid #eee;">No 😐</button>
+    </div>
+  </div>
+
+  <div class="envelope-wrapper" id="screen-envelope">
+    <div class="envelope" onclick="openLetter()">
+      <div class="flap" id="flap"></div>
+      <div class="pocket"></div>
+      <div class="seal">🌼</div> 
+      
+      <div class="letter" id="letter">
+        <div class="letter-deco deco-tl">🌼</div>
+        <div class="letter-deco deco-tr">🌼</div>
+        <div class="letter-deco deco-bl">🌼</div>
+        <div class="letter-deco deco-br">🤍</div>
+
+        <div class="letter-content">
+          <h2>My Love,</h2>
+          <div class="letter-text" id="typewriter-text"></div>
+          <div class="signature">— Pengu 🐧</div>
+          <button class="proposal-btn" id="proposal-btn" onclick="acceptProposal()">Yes, I will! 💍</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration-screen">
+    <h1>muaaaahhh <br> i love u soo much 💗😭</h1>
+  </div>
+
+<script>
+  // --- CONFIG ---
+  const PASSCODE = "051225";
+  const MUSIC = document.getElementById("music");
+  
+  // --- TEXT ---
+  const message = `Unmm hiiee babyyy 👉🏻👈🏻🫣
+phele to idhr aooo muaahhhh
+I love u soo much baby 👉🏻👈🏻
+
+merko na apse na pyar hogya h bhut sara
+firse aur hota he jara h 🥺
+
+ek to app ho door
+ur p se u love me this much
+and make me feel special itna Sara
+so I wanted make this for u 🥺👉🏻👈🏻
+
+uk this month was more beautiful
+i learned many new things
+and I have started know how to love u
+and honestly I'm falling for u more and more
+every single day yaaar 🥹
+
+just look at u
+kitne pyare ho app like seriously
+muuaaaahhh I love u sooo much
+my baby 💗
+
+almost 2 month hogye h
+realation ship ko hmare
+aur ek chiz to confirm h
+I can't see tears in ur eyes 🥹
+
+seeing u crying make me feel bad
+ki I've failed
+ik u will say apki galti ni h
+happppp happp happp muaaaaaaahhhh 😭
+
+heheh galti se pucha nikal gya
+hehhehe
+hn ab smile krlo app haslo
+me serious bat kr rha hon
+abhi b smile kr rha h 😭😭😭
+
+gnda baby
+kissu ni dungaaaa
+happp 😤
+
+merko na wo puchna tha ki
+will u be my valentine
+for the rest of my life 💗
+
+fk 14 feb
+I need u every single day
+to be my valentine
+so I can love u more and more
+
+bahana he mil jayega merko
+to roz valentine hoga hmara
+hehe 😌
+
+and baby 👉🏻👈🏻
+it's my first valentine
+mera har bar kuch na kuch ho jata tha 😓
+so idk how to but I'll try
+
+so kuch upr niche idhr udhr lage
+to maafi de dena hmko
+gussa na hona mera cutuu 🥺
+
+soo will u be my valentine
+my beautiful girl friend 👉🏻👈🏻💗`;
+
+  // --- BACKGROUND ANIMATION ---
+  function createFloatItem() {
+    const el = document.createElement('div');
+    el.classList.add('float-item');
+    el.innerText = Math.random() > 0.5 ? '🌼' : '🤍';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = Math.random() * 3 + 4 + 's';
+    document.getElementById('bg-hearts').appendChild(el);
+    setTimeout(() => el.remove(), 7000);
+  }
+  setInterval(createFloatItem, 500);
+
+  // --- PASSWORD & HINT LOGIC ---
+  function checkPass() {
+    if(document.getElementById("password").value === PASSCODE) {
+      document.getElementById("screen-lock").classList.remove("active");
+      setTimeout(() => {
+        document.getElementById("screen-question").classList.add("active");
+      }, 500);
+    } else {
+      alert("Wrong password 🥺");
+    }
+  }
+
+  function openHint() {
+    document.getElementById("screen-lock").classList.remove("active");
+    setTimeout(() => {
+      document.getElementById("screen-hint").classList.add("active");
+    }, 500);
+  }
+
+  // --- NEW HINT LOGIC (SWAPPED) ---
+  const btnAashi = document.getElementById("btn-aashi");
+  const btnSauru = document.getElementById("btn-sauru");
+  let hintScaleAashi = 1;
+  let hintScaleSauru = 1;
+
+  function moveHintButton() {
+    const x = (Math.random() * 200) - 100;
+    const y = (Math.random() * 100) - 50;
+    
+    // Now Aashi (the wrong answer) runs away
+    btnAashi.style.transform = `translate(${x}px, ${y}px) scale(${hintScaleAashi})`;
+    
+    // Aashi gets smaller
+    hintScaleAashi -= 0.05;
+    if(hintScaleAashi < 0) hintScaleAashi = 0;
+    btnAashi.style.transform = `translate(${x}px, ${y}px) scale(${hintScaleAashi})`;
+
+    // Sauru (Correct answer) gets bigger
+    hintScaleSauru += 0.1;
+    btnSauru.style.transform = `scale(${hintScaleSauru})`;
+  }
+
+  // Attach event listener to Aashi (since Aashi is now the one running away)
+  btnAashi.addEventListener("mouseover", moveHintButton);
+  btnAashi.addEventListener("touchstart", moveHintButton);
+
+  function showReward() {
+    document.getElementById("screen-hint").classList.remove("active");
+    setTimeout(() => {
+      document.getElementById("screen-reward").classList.add("active");
+    }, 500);
+  }
+
+  function goBackToLock() {
+    document.getElementById("screen-reward").classList.remove("active");
+    setTimeout(() => {
+      document.getElementById("screen-lock").classList.add("active");
+      // Reset hints
+      hintScaleAashi = 1;
+      hintScaleSauru = 1;
+      btnSauru.style.transform = `scale(1)`;
+      btnAashi.style.transform = `translate(0,0) scale(1)`;
+    }, 500);
+  }
+
+  // --- QUESTION SCREEN ---
+  const btnYes = document.getElementById("btn-yes");
+  const btnNo = document.getElementById("btn-no");
+  let scale = 1;
+
+  function moveButton() {
+    const x = (Math.random() * 200) - 100; 
+    const y = (Math.random() * 200) - 100;
+    btnNo.style.transform = `translate(${x}px, ${y}px)`;
+    scale += 0.1;
+    btnYes.style.transform = `scale(${scale})`;
+  }
+  btnNo.addEventListener("mouseover", moveButton);
+  btnNo.addEventListener("touchstart", moveButton);
+
+  btnYes.addEventListener("click", () => {
+    document.getElementById("screen-question").classList.remove("active");
+    setTimeout(() => {
+      document.getElementById("screen-envelope").classList.add("active");
+    }, 500);
+  });
+
+  // --- ENVELOPE ---
+  let isOpened = false;
+
+  function openLetter() {
+    if (isOpened) return;
+    isOpened = true;
+
+    document.getElementById("flap").classList.add("open");
+    document.getElementById("screen-envelope").classList.add("open-state");
+
+    setTimeout(() => {
+      document.getElementById("letter").classList.add("active");
+      MUSIC.play().catch(e => console.log("Audio requires interaction"));
+      startTypewriter();
+    }, 800);
+  }
+
+  function startTypewriter() {
+    const textField = document.getElementById("typewriter-text");
+    let i = 0;
+    function type() {
+      if (i < message.length) {
+        textField.innerHTML += message.charAt(i);
+        i++;
+        const letterDiv = document.getElementById("letter");
+        letterDiv.scrollTop = letterDiv.scrollHeight; 
+        setTimeout(type, 30);
+      } else {
+        const btn = document.getElementById("proposal-btn");
+        btn.style.display = "block";
+        const letterDiv = document.getElementById("letter");
+        letterDiv.scrollTop = letterDiv.scrollHeight; 
+      }
+    }
+    type();
+  }
+
+  // --- CELEBRATION ---
+  function acceptProposal() {
+    document.getElementById("screen-envelope").style.opacity = "0";
+    setTimeout(() => {
+      document.getElementById("screen-envelope").style.display = "none";
+      document.getElementById("celebration-screen").classList.add("active");
+      setInterval(createConfetti, 150);
+    }, 500);
+  }
+
+  function createConfetti() {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    const emojis = ["🌸", "💍", "🤍", "🐧", "💗", "🌼"];
+    confetti.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.animationDuration = Math.random() * 2.5 + 2 + "s";
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 4500);
+  }
+</script>
+</body>
+</html>
